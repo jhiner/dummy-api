@@ -35,6 +35,7 @@ app.get('/authorized', function (req, res) {
     return res.status(401).json({});
   }
 
+  console.log('Sending 200 status');
   return res.json({status: 'ok', data: 'here is some data ' + randomNumber});
 });
 

@@ -5,10 +5,12 @@ const jwt = require('express-jwt');
 const rsaValidation = require('auth0-api-jwt-rsa-validation');
 require('dotenv').config();
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const port = process.env.PORT || 7000;
 
 const jwtCheck = jwt({
-  secret: rsaValidation(),
+  secret: rsaValidation({strictSSL:false}),
   algorithms: ['RS256'],
   issuer: 'https://' + process.env.AUTH0_DOMAIN + '/',
   audience: process.env.API_IDENTIFIER
@@ -24,19 +26,20 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-app.get('/authorized', function (req, res) { 
-
-  const randomNumber = getRandomInt (1,100);
-
-  // check to see if we want to send random 401 status
-  // this can be useful for testing refresh token functionality
-  if (process.env.RANDOM_401 === 'true' && randomNumber % 2 === 0) {
-    console.log('Sending 401 status');
-    return res.status(401).json({});
-  }
-
+app.get('/', function (req, res) { 
+  const randomNumber = getRandomInt (1,10000);
   console.log('Sending 200 status');
   return res.json({status: 'ok', data: 'here is some data ' + randomNumber});
+});
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({
+    message: err.message,
+    error: {}
+  });
 });
 
 app.listen(port);

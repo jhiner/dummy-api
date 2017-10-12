@@ -14,5 +14,13 @@
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "express-jwt": "^5.1.0"
+  },
+  "now": {
+    "files": [
+      ".env",
+      "./"
+    ],
+    "name": "dummy-api-demo",
+    "alias": "dummy-api-demo"
   }
 }
